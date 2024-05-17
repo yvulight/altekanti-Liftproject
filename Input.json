@@ -1,6 +1,6 @@
 {
   "input": {
-    "is_internal": true,
+    "is_internal": false,
     "external": {
       "storey": 6,
       "upwards": true
