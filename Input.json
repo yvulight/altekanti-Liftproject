@@ -18,17 +18,20 @@
           3,
           5,
           7
-        ]
+        ],
+        "people": 3
       },
       {
         "position": 3,
-        "targets": []
+        "targets": [],
+        "people": 0
       },
       {
         "position": 5,
         "targets": [
           0
-        ]
+        ],
+        "people": 1
       }
     ]
   }
