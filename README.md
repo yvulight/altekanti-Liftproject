@@ -10,3 +10,10 @@ Viel spass bi dem mini herre :)
 ## new Explanation
 1. Input Fila en ALgo
 2. ALgo gibt auftrag weiter, ordnet -> Output.json fast wie input.json nur ohne Inpunt
+
+## Prioritaeten des Lifts 21.5 - Yves
+**extern gedrueckt**
+1. Lift steht gerade hier
+2. Lift der nichts zu tun hat und inherhalb 2 stockwerken hier ist
+3. leerere lift auf der Durchfahrt.
+else: der lift, mit den wenigsten targets/am nahsten

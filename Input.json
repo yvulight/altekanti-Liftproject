@@ -22,14 +22,16 @@
         "people": 3
       },
       {
-        "position": 3,
-        "targets": [],
+        "position": 4,
+        "targets": [
+        7
+        ],
         "people": 0
       },
       {
         "position": 5,
         "targets": [
-          0
+          6
         ],
         "people": 1
       }
