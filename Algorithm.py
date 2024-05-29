@@ -35,9 +35,18 @@ if not input['input']['is_internal']:
         lift_targets_list.append(input['state']['lifts'][i]['targets'])
         lift_people_list.append(input['state']['lifts'][i]['people'])
 
+#versuch nummer 2 29.5.24
+#ist ein Lift hier?
+if where_pressed in lift_positions_list:
+    lift_number = where_pressed
+    output['state']['lifts'][lift_number]['targets'].append(where_pressed)
+elif direction_upwards: #2. Lift < halbvoll und auf der Durchfahrt upwards (platz <where_pressed<ziel)
+    for lift_number in range(0,3)
+
+
 
 #dangerous passage: wenn error, ev. weil nichts in target liste-> 2.
-
+'''
     for lift_number in range(3):
         if where_pressed == lift_positions_list[lift_number]: #1. ist ein Lift hier?
             #Dieser Lift machts
@@ -52,7 +61,7 @@ if not input['input']['is_internal']:
         #3. leerer Lift nah(x>2)
 
     #ev. check ob Lift hier ist; ob ein Lift vorbeifähret(der noch platz hat);welcher Lift denn sonst der nächste ist, falls keiner was macht
-    
+'''
 
 
 
