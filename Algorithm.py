@@ -38,10 +38,32 @@ if not input['input']['is_internal']:
 #versuch nummer 2 29.5.24
 #ist ein Lift hier?
 if where_pressed in lift_positions_list:
-    lift_number = where_pressed
+    lift_number = lift_positions_list.index(where_pressed)
     output['state']['lifts'][lift_number]['targets'].append(where_pressed)
-elif direction_upwards: #2. Lift < halbvoll und auf der Durchfahrt upwards (platz <where_pressed<ziel)
-    for lift_number in range(0,3)
+elif [where_pressed in list for list in lift_targets_list]: #wird ein Lift hier halten
+    #was wenn mehrere lifte hier halten werden
+    for list in lift_targets_list:
+        if where_pressed in list:
+            lift_number = lift_targets_list.index(list)
+            if lift_people_list[lift_number] < max_people/2:
+                print('ein lift machts')
+                #Ein lift wird hier halten und ist nur halbvoll
+                #lift bereits in name, DO NOTHING auch TONII
+                #continue ????
+
+elif [list == [] for list in lift_targets_list]: #hat ein Lift nichts zu tun
+    lift_number = lift_targets_list.index([])
+    print('ein hobbzloser existiert')
+    if (lift_positions_list[lift_number] - where_pressed)^2 < 9:
+        output['state']['lifts'][lift_number]['targets'].append(where_pressed)
+
+
+elif any(space < max_people/2 for space in lift_people_list): #schaut ob mind 1 lift nur leerer als halbvoll is_internal
+    lift_people_list_sorted = lift_people_list.copy()
+    lift_people_list_sorted.sort()
+    print(lift_people_list, lift_people_list_sorted)
+    #jetzt wollen wir wissen, ob einer dieser Lifte hier haelt
+
 
 
 
