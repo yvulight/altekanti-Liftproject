@@ -15,8 +15,14 @@ neuer zuordner:
 - Lift hier? J
 - wird ein Lift hier halten J
     - ist er halbvoll? J
-- naher leerer lift(wartend)
+- naher leerer lift(wartend) J
 - wird ein Lift hier halten
     - halbvoll?
 - leerster Lift/nahster lift?
 - irgendein lift(wenigste Targets)
+
+#### Vayquey
+Kommentar zur library pygame.
+In Dokumentation unbedingt Algorithm kommentieren
+
+

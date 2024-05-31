@@ -15,13 +15,14 @@
       {
         "position": 0,
         "targets": [
-          3
+          3,
+          6
         ],
-        "people": 3
+        "people": 14
       },
       {
-        "position": 5,
-        "targets": [],
+        "position": 6,
+        "targets": [6],
         "people": 0
       },
       {

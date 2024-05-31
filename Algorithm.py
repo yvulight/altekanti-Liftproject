@@ -8,6 +8,7 @@ input = json.load(f)
 output = input.copy()
 max_people = 14
 
+
 #Falls der Input im Lift ist, muss einfach das stockwerk der Target liste hinzugefügt werden
 if input['input']['is_internal']:
     lift_number = input['input']['internal']['lift']
@@ -35,34 +36,51 @@ if not input['input']['is_internal']:
         lift_targets_list.append(input['state']['lifts'][i]['targets'])
         lift_people_list.append(input['state']['lifts'][i]['people'])
 
+    lift_people_list_sorted = lift_people_list.copy()
+    lift_people_list_sorted.sort()
+    print(lift_people_list, lift_people_list_sorted)
+    lift_people_list_numbers_sorted = []
+    for lift_people in lift_people_list_sorted:
+        lift_people_list_numbers_sorted.append(lift_people_list.index(lift_people)) #eine Liste gemacht, die die Liftnummern mit dem leichtesten Lift zuerst enthaelt
+    print(lift_people_list_numbers_sorted)
+    lift_chosen = False
+
+
 #versuch nummer 2 29.5.24
 #ist ein Lift hier?
 if where_pressed in lift_positions_list:
     lift_number = lift_positions_list.index(where_pressed)
-    output['state']['lifts'][lift_number]['targets'].append(where_pressed)
-elif [where_pressed in list for list in lift_targets_list]: #wird ein Lift hier halten
+    print('here is one')
+    if where_pressed not in lift_targets_list[lift_number]:
+        output['state']['lifts'][lift_number]['targets'].append(where_pressed)
+        lift_chosen = True
+        print('and it isnt in the lsit')
+if not lift_chosen and any(where_pressed in list for list in lift_targets_list): #wird ein Lift hier halten
     #was wenn mehrere lifte hier halten werden
+    print('hoi')
     for list in lift_targets_list:
         if where_pressed in list:
             lift_number = lift_targets_list.index(list)
             if lift_people_list[lift_number] < max_people/2:
                 print('ein lift machts')
+                already_in_targets = True
+                lift_chosen = True
                 #Ein lift wird hier halten und ist nur halbvoll
                 #lift bereits in name, DO NOTHING auch TONII
                 #continue ????
 
-elif [list == [] for list in lift_targets_list]: #hat ein Lift nichts zu tun
+if not lift_chosen and any(not list for list in lift_targets_list): #hat ein Lift nichts zu tun
     lift_number = lift_targets_list.index([])
-    print('ein hobbzloser existiert')
+    print('ein hobbyloser existiert')
     if (lift_positions_list[lift_number] - where_pressed)^2 < 9:
         output['state']['lifts'][lift_number]['targets'].append(where_pressed)
+        lift_chosen
 
+elif not lift_chosen: #noch keiner zugeordnet
+    for lift_number in lift_people_list_numbers_sorted: #der gewichtsreihenfolge nach
+        if lift_positions_list[lift_number] < where_pressed:
+            print('in between')
 
-elif any(space < max_people/2 for space in lift_people_list): #schaut ob mind 1 lift nur leerer als halbvoll is_internal
-    lift_people_list_sorted = lift_people_list.copy()
-    lift_people_list_sorted.sort()
-    print(lift_people_list, lift_people_list_sorted)
-    #jetzt wollen wir wissen, ob einer dieser Lifte hier haelt
 
 
 
