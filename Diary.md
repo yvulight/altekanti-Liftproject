@@ -15,14 +15,46 @@ neuer zuordner:
 - Lift hier? J
 - wird ein Lift hier halten J
     - ist er halbvoll? J
+    - wenn er vom 0 ins 6 ins 7 fahr und du vom 6 runter willst???
 - naher leerer lift(wartend) J
-- wird ein Lift hier halten
-    - halbvoll?
-- leerster Lift/nahster lift?
-- irgendein lift(wenigste Targets)
+- faehrt ein Lift in meine Richtung J
+    - halbvoll?(reihenfolge) Jein
+-Lift mit den wenigsten Target/leuten/nahsten
+    mithilfe werte Multiplizieren mit wertigkeit (1*n(Targets)+0.5*Distanz+0.1*n(Leute)) -> tiefster Wert nimmt
 
 #### Vayquey
 Kommentar zur library pygame.
 In Dokumentation unbedingt Algorithm kommentieren
 
+#### Yves - 1.6
+bloeder fall:{
+    "external": {
+      "storey": 5,
+      "upwards": true
+    }
+  "state": {
+    "lifts": [
+      {
+        "position": 0,
+        "targets": [
+          3,
+          6
+        ],
+        "people": 14
+      },
+      {
+        "position": 4,
+        "targets": [
+        3
+        ],
+        "people": 0
+      },
+      {
+        "position": 6,
+        "targets": [
+          7
+        ],
+        "people": 1
+      }
 
+Kann man es so programmieren, dass zuerst alles angegeben wird un dann erst gekuck. also alle werte in Variabeln gespeichert

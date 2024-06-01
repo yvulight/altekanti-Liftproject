@@ -2,7 +2,7 @@
   "input": {
     "is_internal": false,
     "external": {
-      "storey": 6,
+      "storey": 0,
       "upwards": true
     },
     "internal": {
@@ -21,14 +21,16 @@
         "people": 14
       },
       {
-        "position": 6,
-        "targets": [6],
+        "position": 1,
+        "targets": [
+        3
+        ],
         "people": 0
       },
       {
-        "position": 5,
+        "position": 0,
         "targets": [
-          5
+          7
         ],
         "people": 1
       }

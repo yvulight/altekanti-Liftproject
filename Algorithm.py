@@ -1,5 +1,5 @@
 import json
-
+import math
 # Opening JSON file
 f = open('Input.json')
 
@@ -20,14 +20,6 @@ if not input['input']['is_internal']:
     where_pressed = input['input']['external']['storey']
     direction_upwards = input['input']['external']['upwards']
 
-    # jetzt kommt die heilige Frage, welcher Lift hohlt diese Person ab?
-    lift0_position = input['state']['lifts'][0]['position']
-    lift1_position = input['state']['lifts'][1]['position']
-    lift2_position = input['state']['lifts'][2]['position']
-    lift0_target = input['state']['lifts'][0]['targets']
-    lift1_target = input['state']['lifts'][1]['targets']
-    lift2_target = input['state']['lifts'][2]['targets']
-
     lift_positions_list = []#liste erstellen im Format [0,3,5] mit der Position der lifte
     lift_targets_list = []
     lift_people_list = []
@@ -38,23 +30,32 @@ if not input['input']['is_internal']:
 
     lift_people_list_sorted = lift_people_list.copy()
     lift_people_list_sorted.sort()
-    print(lift_people_list, lift_people_list_sorted)
     lift_people_list_numbers_sorted = []
     for lift_people in lift_people_list_sorted:
         lift_people_list_numbers_sorted.append(lift_people_list.index(lift_people)) #eine Liste gemacht, die die Liftnummern mit dem leichtesten Lift zuerst enthaelt
-    print(lift_people_list_numbers_sorted)
     lift_chosen = False
+    already_in_targets = False
 
 
 #versuch nummer 2 29.5.24
 #ist ein Lift hier?
 if where_pressed in lift_positions_list:
+    #Hier ist ein Lift
     lift_number = lift_positions_list.index(where_pressed)
-    print('here is one')
-    if where_pressed not in lift_targets_list[lift_number]:
-        output['state']['lifts'][lift_number]['targets'].append(where_pressed)
+    print('hier ist ein Lift', lift_number)
+
+    if lift_people_list[lift_number] < (max_people-2): #falls der Lift nicht voll ist
+        print('here is one that aint full')
+        if where_pressed not in lift_targets_list[lift_number]:
+            #liftnummer hinzufuegen
+            print('and it isnt in the lsit')
+            already_in_targets = False
+        else:
+            already_in_targets = True
+            print('and it is in the list')
         lift_chosen = True
-        print('and it isnt in the lsit')
+
+
 if not lift_chosen and any(where_pressed in list for list in lift_targets_list): #wird ein Lift hier halten
     #was wenn mehrere lifte hier halten werden
     print('hoi')
@@ -72,41 +73,36 @@ if not lift_chosen and any(where_pressed in list for list in lift_targets_list):
 if not lift_chosen and any(not list for list in lift_targets_list): #hat ein Lift nichts zu tun
     lift_number = lift_targets_list.index([])
     print('ein hobbyloser existiert')
-    if (lift_positions_list[lift_number] - where_pressed)^2 < 9:
-        output['state']['lifts'][lift_number]['targets'].append(where_pressed)
-        lift_chosen
+    if (lift_positions_list[lift_number] - where_pressed)**2 < 9:
+        lift_chosen = True
 
-elif not lift_chosen: #noch keiner zugeordnet
+if not lift_chosen: #noch keiner zugeordnet
     for lift_number in lift_people_list_numbers_sorted: #der gewichtsreihenfolge nach
-        if lift_positions_list[lift_number] < where_pressed:
-            print('in between')
+        if (lift_positions_list[lift_number] - where_pressed)**2 < 9: #der Lift ist nicht weiter als 3 stockwerke entfernt
+            if direction_upwards and lift_positions_list[lift_number] < where_pressed: # der
+                print('lift bellow', lift_number)
+                lift_chosen = True
+                break
+            elif not direction_upwards and lift_positions_list[lift_number] > where_pressed:
+                print('in higher', lift_number)
+                lift_chosen = True
+                break
 
-
-
-
-
-#dangerous passage: wenn error, ev. weil nichts in target liste-> 2.
-'''
+if not lift_chosen: #die Hoffnungslose Wahl :(
+    gute_liste = []
     for lift_number in range(3):
-        if where_pressed == lift_positions_list[lift_number]: #1. ist ein Lift hier?
-            #Dieser Lift machts
-            output['state']['lifts'][lift_number]['targets'].append(where_pressed)
-            break
-        elif direction_upwards and lift_people_list[lift_number] < max_people/2 and (lift_positions_list[lift_number] <= where_pressed <= lift_targets_list[lift_number][0]): #2. Lift < halbvoll und auf der Durchfahrt upwards (platz <where_pressed<ziel)
-            output['state']['lifts'][lift_number]['targets'].insert(0, where_pressed)
-            break
-        elif not direction_upwards and lift_people_list[lift_number] < max_people/2 and (lift_positions_list[lift_number] >= where_pressed >= lift_targets_list[lift_number][0]): #2. Lift < halbvoll und auf der Durchfahrt (pos>where_pressed>target)
-            output['state']['lifts'][lift_number]['targets'].insert(0, where_pressed)
-            break
-        #3. leerer Lift nah(x>2)
+        g_n_targets = len(lift_targets_list[lift_number])
+        g_distance = math.sqrt((lift_positions_list[lift_number] - where_pressed)**2)
+        g_people = lift_people_list[lift_number]
 
-    #ev. check ob Lift hier ist; ob ein Lift vorbeifähret(der noch platz hat);welcher Lift denn sonst der nächste ist, falls keiner was macht
-'''
+        gute_liste.append(1*g_n_targets+0.5*g_distance+0.1*g_people)
+    print(gute_liste)
+    lift_number = gute_liste.index(min(gute_liste))
 
-
+if not already_in_targets:
+    output['state']['lifts'][lift_number]['targets'].append(where_pressed)
 
 #targets ordnen
-#falls doppelt vorhanden -> loeschen
 
 
 
