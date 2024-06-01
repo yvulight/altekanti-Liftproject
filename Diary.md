@@ -58,3 +58,24 @@ bloeder fall:{
       }
 
 Kann man es so programmieren, dass zuerst alles angegeben wird un dann erst gekuck. also alle werte in Variabeln gespeichert
+#### Video OTIS
+So ein relay system, dass einen lift hoch, und den andern Lift runterschickt.
+
+### neuer Algorithm???
+moeglichkeit:
+Lift hier?
+Werte bestimmen
+- n(People)
+- n(targets)
+- distance
+- direction
+- where_pressed in targets
+
+Probleme loesen
+- Lift hier? Check
+- wird ein Lift hier halten c
+    - ist er halbvoll? J
+    - wenn er vom 0 ins 6 ins 7 fahr und du vom 6 runter willst??? c
+- naher leerer lift(wartend) c
+- faehrt ein Lift in meine Richtung c
+    - halbvoll?(reihenfolge) Jein
