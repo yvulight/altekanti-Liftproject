@@ -65,17 +65,15 @@ So ein relay system, dass einen lift hoch, und den andern Lift runterschickt.
 moeglichkeit:
 Lift hier?
 Werte bestimmen
-- n(People)
-- n(targets)
-- distance
-- direction
-- where_pressed in targets
+- n(People) - 0.5+1
+- n(targets) - 1+1
+- distance - 1+1
+- direction - 1+1
+- where_pressed in targets x/7
 
-Probleme loesen
-- Lift hier? Check
-- wird ein Lift hier halten c
-    - ist er halbvoll? J
-    - wenn er vom 0 ins 6 ins 7 fahr und du vom 6 runter willst??? c
-- naher leerer lift(wartend) c
-- faehrt ein Lift in meine Richtung c
-    - halbvoll?(reihenfolge) Jein
+#### 2.6
+noch lift sperren, wenn jemand einsteig
+someone_enters DONE
+hypothetische target position: an welcher stelle where_pressed waere, wenn es diesem Lift zugeordnet wird. daher einfluss auf waage n_people und n_targets
+
+
