@@ -1,5 +1,83 @@
 import json
 import math
+
+def insertion(lift_position, lift_targets): #Eine Funktion wird erstellt, mit den zwei Inputs als Parameter
+    if direction_upwards == True: #Hier wird überprüft, ob der Lift nach unten oder nach oben fährt
+
+        for i in range(1,le): #Toni, warum uebernimmst du die liste so kompliyiert und umgehst doppelte??????????????
+            if lift_targets[i] < lift_position:
+                if lift_targets[i] not in l:
+                    l.append(lift_targets[i])
+                    lift_targets.pop(i)
+        print(l)
+
+
+        for i in range(1,le): #Nun wird die Liste sortiert, angefangen mit dem kleinsten
+            if lift_targets[i] < lift_targets[i-1]:
+                temp = lift_targets[i]
+                j = i
+                while (temp <= lift_targets[j-1] and j > 0):
+                    lift_targets[j] = lift_targets[j-1]
+                    j-= 1
+                lift_targets[j] = temp
+
+        print(lift_targets)
+
+
+        for i in range(1,la): #Hier wird die zweite Liste sortiert, angefangen mit dem grössten
+            if l[i] > l[i-1]:
+                temp = l[i]
+                j = i
+                while (temp >= l[j-1] and j > 0):
+                    l[j] = l[j-1]
+                    j-= 1
+                l[j] = temp
+
+        print(l)
+
+        for i in range(1, la): # Hier wird jedes Element der zweiten Liste an die erste Liste angehängt
+            lift_targets.append(l[i])
+            l.pop(i)
+        print(lift_targets)
+
+
+
+    if direction_upwards == False: #Hier wird geprüft, ob der Lift nach unten oder nach oben fährt
+
+        for i in range(1,le):
+            if lift_targets[i] < lift_position:
+                if lift_targets[i] not in l:
+                    l.append(lift_targets[i])
+                    lift_targets.pop(i)
+
+
+        for i in range(1,le): #Hier wird die Liste sortiert, angefangen mit dem grössten
+            if lift_targets[i] > lift_targets[i-1]:
+                temp = lift_targets[i]
+                j = i
+                while (temp >= lift_targets[j-1] and j > 0):
+                    lift_targets[j] = lift_targets[j-1]
+                    j-= 1
+                lift_targets[j] = temp
+            return lift_targets
+
+
+        for i in range(1,la): #Hier wird die Liste sortiert, angefangen mit dem kleinsten
+            if l[i] < l[i-1]:
+                temp = l[i]
+                j = i
+                while (temp <= l[j-1] and j > 0):
+                    l[j] = l[j-1]
+                    j-= 1
+            l[j] = temp
+        print(l)
+
+
+        for i in range(1, la): #Hier wird jedes Element der zweiten Liste an die erste Liste angehängt
+            lift_targets.append(l[i])
+            l.pop(i)
+        print(lift_targets)
+
 # Opening JSON file
 f = open('Input.json')
 
@@ -99,16 +177,17 @@ if not lift_chosen: #die Hoffnungslose Wahl :(
     print(gute_liste)
     lift_number = gute_liste.index(min(gute_liste))
 
+
+#targets ordnen
+#TONI ------------------------
+
+
+
 if not already_in_targets:
     output['state']['lifts'][lift_number]['targets'].append(where_pressed)
 
-#targets ordnen
-
-
-
-
 #delete Input part from Output.json
-#output.pop('input')
+output.pop('input')
 
 f.close()
 
