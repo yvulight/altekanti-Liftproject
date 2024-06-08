@@ -111,7 +111,7 @@ def choose_lift(input):
         if lift_people_list[lift_number] < max_people/2:
             lift_chosen = True
 
-    #GUTIGKEITSVERFAHREN!!!!!!!!!111
+    #GUTIGKEITSVERFAHREN!!
     if not lift_chosen:
         goodness_list = []
         for lift_number in range(3):
@@ -129,6 +129,7 @@ def choose_lift(input):
     if where_pressed in lift_targets_list[lift_number]:
         already_in_targets = True
 
+    print('already_in_targets', already_in_targets)
     return lift_number,already_in_targets
 
 
@@ -165,10 +166,11 @@ if not input['input']['is_internal']:
 #SORT LISTS ---- SORT
 if not already_in_targets and len(input['state']['lifts'][lift_number]['targets']) > 0:
     lift_targets = sort_list(input, lift_number)
+    output['state']['lifts'][lift_number]['targets'] = lift_targets
 else: #Input einfach anfuegen wenn noch kein Element in targets
     lift_targets = input['state']['lifts'][lift_number]['targets'].append(target)
 
-output['state']['lifts'][lift_number]['targets'] = lift_targets
+
 
 
 

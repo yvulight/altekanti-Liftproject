@@ -13,26 +13,27 @@
   "state": {
     "lifts": [
       {
-        "position": 4,
+        "position": 0,
         "targets": [
+          4,
           5,
-          6
+          7
         ],
-        "people": 14
-      },
-      {
-        "position": 1,
-        "targets": [
-        3
-        ],
-        "people": 0
+        "people": 10
       },
       {
         "position": 5,
         "targets": [
-          1
+        0
         ],
-        "people": 1
+        "people": 2
+      },
+      {
+        "position": 3,
+        "targets": [
+          0
+        ],
+        "people": 0
       }
     ]
   }
