@@ -8,10 +8,7 @@ def sort_list(input,lift_number):
 
     if input['input']['is_internal']:
         new_target = input['input']['internal']['storey']
-        if lift_position > new_target:
-            direction_upwards = False
-        else:
-            direction_upwards = True
+        direction_upwards = lift_position <= new_target
     else:
         direction_upwards = input['input']['external']['upwards']
         new_target = input['input']['external']['storey']
@@ -52,91 +49,39 @@ def choose_lift(input):
         lift_targets_list.append(input['state']['lifts'][i]['targets'])
         lift_people_list.append(input['state']['lifts'][i]['people'])
 
-    #GENERIERTE lISTEN
-    #n(targets)
-    #distance
-    #direction
-    #where_pressed in targets
-    n_targets_list = []
-    distance_list = []
-    direction_same_list = []
-    where_pressed_in_targets_list = []
-    someone_enters = []
-
+    # Überprüfe, ob ein Lift bereits an der gleichen Position ist
     for lift_number in range(3):
-        n_targets_list.append(len(lift_targets_list[lift_number])) # anzahl Targets des Lifts
-        distance_list.append(math.sqrt((lift_positions_list[lift_number] - where_pressed)**2)) # distanz zum Input(where_pressed)
+        if lift_positions_list[lift_number] == where_pressed and direction_upwards == (lift_positions_list[lift_number] < where_pressed) and lift_people_list[lift_number] < 10:
+            return lift_number, where_pressed in lift_targets_list[lift_number]
 
-        # die direction_upwards True or False or ''
-        if len(lift_targets_list[lift_number]) > 0: #Wenn der Lift mind. ein Target hat
-            if lift_positions_list[lift_number] < lift_targets_list[lift_number][0] and direction_upwards:
-                direction_same_list.append(1) # same direction up
-            elif lift_positions_list[lift_number] > lift_targets_list[lift_number][0] and not direction_upwards:
-                direction_same_list.append(1) # same direction down
-            elif lift_positions_list[lift_number] < lift_targets_list[lift_number][0] and (where_pressed == 7 and not direction_upwards):
-                direction_same_list.append(1.5 - (distance_list[lift_number]/5)) # Person top down, lift on its way to turn
-            elif lift_positions_list[lift_number] > lift_targets_list[lift_number][0] and (where_pressed == 0 and direction_upwards):
-                direction_same_list.append(1.5 - (distance_list[lift_number]/5)) # Lift umdrehen, distance weil einfluss wie weit weg er noch ist
-            else:
-                direction_same_list.append(0) # Nothing
+    goodness_list = []
+    for lift_number in range(3):
+        if lift_people_list[lift_number] >= 14:
+            goodness_list.append(float('inf'))  # Dieser Lift kann keine neuen externen Ziele annehmen
+            continue
+
+        value = abs(lift_positions_list[lift_number] - where_pressed)
+        same_direction = (lift_positions_list[lift_number] < where_pressed) == direction_upwards
+        value += 0.7 * same_direction  # Werte die Fahrtrichtung höher
+        value += 0.8 * abs(same_direction - 1)  # Verringere den Wert, wenn die Fahrtrichtung unterschiedlich ist
+
+        if where_pressed in lift_targets_list[lift_number]:
+            target_index = lift_targets_list[lift_number].index(where_pressed)
         else:
-            direction_same_list.append(0) # Nothing
+            target_index = len(lift_targets_list[lift_number])
 
-        #where_pressed in targets
-        if where_pressed in lift_targets_list[lift_number] and direction_same_list[lift_number] > 1: # direction_same weil wenn verschieden direction ist wertlos
-            in_targets_temp = lift_targets_list[lift_number].index(where_pressed)
-            where_pressed_in_targets_list.append(in_targets_temp) #das wievielte target in die liste mal 0 oder 1 ob es die gleiche richtung hat
-        else:
-            where_pressed_in_targets_list.append(9) # False, 7 ist der schlechteste Wert, den es oben annehmen kann
+        value += 1.2 * (target_index + 1)
+        someone_enters = 1 if lift_positions_list[lift_number] == where_pressed else 0
+        value += 5 * someone_enters
+        goodness_list.append(value)
 
-        #someone_enters
-        if len(lift_targets_list[lift_number]) == 1 and lift_targets_list[lift_number][0] == lift_positions_list[lift_number]:
-            #jemand steigt ein
-            someone_enters.append(1)
-        else:
-            someone_enters.append(0)
+    # Füge eine Überprüfung hinzu, um sicherzustellen, dass `goodness_list` immer die richtige Anzahl von Elementen hat
+    while len(goodness_list) < 3:
+        goodness_list.append(float('inf'))
 
-    print(n_targets_list, distance_list, direction_same_list, where_pressed_in_targets_list, someone_enters)
-    lift_chosen = False
-    already_in_targets = False
-
-
-
-
-    #AUSWAHLVERFAHREN!!!
-    #Lift hier?
-    #Wertigkeit
-    if where_pressed in lift_positions_list: #wenn der Lift hier ist
-        lift_number = lift_positions_list.index(where_pressed)
-        if lift_people_list[lift_number] < max_people/2:
-            lift_chosen = True
-
-    #GUTIGKEITSVERFAHREN!!
-    if not lift_chosen:
-        goodness_list = []
-        for lift_number in range(3):
-            value = 0.4 * (lift_people_list[lift_number]) #0,1,2...14
-            value = 1 * (n_targets_list[lift_number]) + value # 0,1,2...7
-            value = 0.9 * (distance_list[lift_number]) + value # 0,1,2...6
-            value = 2 * (2-direction_same_list[lift_number] ) + value # 1,0 (Same, not same)
-            value = 1.2 * (where_pressed_in_targets_list[lift_number] + 1) + value # 0,1,2...7 oder 7 (wievieltes oder nicht drin->7)
-            value = 5 * someone_enters[lift_number] + value # 0,1 jemand steigt ein sind 15 punkte
-            goodness_list.append(value)
-        print(goodness_list)
-        lift_number = goodness_list.index(min(goodness_list))
-        lift_chosen = True
-
-    if where_pressed in lift_targets_list[lift_number]:
-        already_in_targets = True
-
-    print('already_in_targets', already_in_targets)
-    return lift_number,already_in_targets
-
-
-
-
-
-
+    lift_number = goodness_list.index(min(goodness_list))
+    already_in_targets = where_pressed in lift_targets_list[lift_number]
+    return lift_number, already_in_targets
 
 
 # Opening JSON file
@@ -169,10 +114,6 @@ if not already_in_targets and len(input['state']['lifts'][lift_number]['targets'
     output['state']['lifts'][lift_number]['targets'] = lift_targets
 else: #Input einfach anfuegen wenn noch kein Element in targets
     lift_targets = input['state']['lifts'][lift_number]['targets'].append(target)
-
-
-
-
 
 
 
