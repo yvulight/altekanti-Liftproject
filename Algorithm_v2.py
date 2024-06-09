@@ -1,5 +1,3 @@
-import json
-import math
 
 def sort_list(input,lift_number):
     lift_position = input['state']['lifts'][lift_number]['position'] # lift position zb. 1
@@ -83,45 +81,51 @@ def choose_lift(input):
     already_in_targets = where_pressed in lift_targets_list[lift_number]
     return lift_number, already_in_targets
 
+def run_algorithm():
+    import json
+    import math
 
-# Opening JSON file
-f = open('Input.json')
+    # Opening JSON file
+    f = open('Input.json')
 
-# returns JSON object as a dictionary
-input = json.load(f)
-output = input.copy()
-max_people = 14
-where_pressed = input['input']['external']['storey']
-
-
-
-#Falls der Input INTERNim Lift ist, muss einfach das stockwerk der Target liste hinzugefügt werden
-if input['input']['is_internal']:
-    lift_number = input['input']['internal']['lift']
-    target = input['input']['internal']['storey']
-    already_in_targets = False
-
-#Falls der Input EXTERN ist, muss heruasgefunden werden welcher Lift die Person abhohlt
-if not input['input']['is_internal']:
-    lift_number, already_in_targets = choose_lift(input)
-    target = input['input']['external']['storey']
-    print(lift_number, already_in_targets)
-
-
-#SORT LISTS ---- SORT
-if not already_in_targets and len(input['state']['lifts'][lift_number]['targets']) > 0:
-    lift_targets = sort_list(input, lift_number)
-    output['state']['lifts'][lift_number]['targets'] = lift_targets
-else: #Input einfach anfuegen wenn noch kein Element in targets
-    lift_targets = input['state']['lifts'][lift_number]['targets'].append(target)
+    # returns JSON object as a dictionary
+    input = json.load(f)
+    output = input.copy()
+    max_people = 14
+    where_pressed = input['input']['external']['storey']
 
 
 
+    #Falls der Input INTERNim Lift ist, muss einfach das stockwerk der Target liste hinzugefügt werden
+    if input['input']['is_internal']:
+        lift_number = input['input']['internal']['lift']
+        target = input['input']['internal']['storey']
+        already_in_targets = False
 
-#delete Input part from Output.json
-output.pop('input')
+    #Falls der Input EXTERN ist, muss heruasgefunden werden welcher Lift die Person abhohlt
+    if not input['input']['is_internal']:
+        lift_number, already_in_targets = choose_lift(input)
+        target = input['input']['external']['storey']
+        print(lift_number, already_in_targets)
 
-f.close()
 
-with open('algo_output.json', 'w', encoding='utf-8') as v:
-    json.dump(output, v, ensure_ascii=False, indent=4)
+    #SORT LISTS ---- SORT
+    if not already_in_targets and len(input['state']['lifts'][lift_number]['targets']) > 0:
+        lift_targets = sort_list(input, lift_number)
+        output['state']['lifts'][lift_number]['targets'] = lift_targets
+    else: #Input einfach anfuegen wenn noch kein Element in targets
+        lift_targets = input['state']['lifts'][lift_number]['targets'].append(target)
+
+
+
+
+    #delete Input part from Output.json
+    output.pop('input')
+
+    f.close()
+
+    with open('algo_output.json', 'w', encoding='utf-8') as v:
+        json.dump(output, v, ensure_ascii=False, indent=4)
+
+
+run_algorithm()

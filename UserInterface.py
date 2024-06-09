@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import ttk
 import threading
 import os
+from Algorithm_v2 import run_algorithm
 
 # Load input data
 with open("algo_output.json") as f:
@@ -15,7 +16,7 @@ with open("Input.json") as I:
 
 # Setting Up Pygame
 pygame.init()
-width, height = 400, 500
+width, height = 400, 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Elevator Sim 2024")
 
@@ -45,11 +46,13 @@ class Elevator(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed_y = speed_y
         self.target_y = y
+        self.people = 0
         self.is_at_target = False
         self.animation_playing = False
         self.animation_played = False
         self.close_doors = False
         self.doors_closed = False
+        self.position = int(7-(self.rect.y -22)/70)
         self.animation_frames = [
             pygame.image.load('images/elevator/Elevator_Doors_2.png').convert() for i in range(1, 14)
         ]
@@ -102,9 +105,9 @@ class Elevator(pygame.sprite.Sprite):
 
 # Create elevators and group them
 all_elevators = pygame.sprite.Group()
-elevator1 = Elevator(100, storey[1], 5)
-elevator2 = Elevator(184, storey[2], 5)
-elevator3 = Elevator(268, storey[3], 5)
+elevator1 = Elevator(100, storey[1], 2)
+elevator2 = Elevator(184, storey[2], 2)
+elevator3 = Elevator(268, storey[3], 2)
 all_elevators.add(elevator1, elevator2, elevator3)
 
 # Tkinter Part
@@ -121,15 +124,24 @@ def submit_number():
         messagebox.showerror("Invalid Input", "Please enter a valid number")
 
 def internal_input(lift,storey):
-    print(lift,storey)
+    #print(lift,storey)
     output_data['input']['is_internal'] = True
-    output_data['input']['internal']['storey'] = storey
+    output_data['input']['internal']['storey'] = int(storey)
+    output_data['input']['internal']['lift'] = int(lift)- 1
+    send_to_algo(True)
 
 def external_input(storey,direction_upwards):
-    print(direction_upwards,storey)
+    #print(direction_upwards,storey)
+    output_data['input']['is_internal'] = False
+    output_data['input']['external']['storey'] = int(storey)
+    output_data['input']['external']['upwards'] = bool(direction_upwards)
+    send_to_algo(False)
 
-def send_to_algo():
-
+def send_to_algo(is_internal):
+    update_output()
+    with open('Input.json', 'w', encoding='utf-8') as v:
+        json.dump(output_data, v, ensure_ascii=False, indent=4)
+    run_algorithm
 
 def change_direction(bool):
     global direction_upwards
@@ -149,7 +161,7 @@ def start_tkinter():
     instruction_label = tk.Label(root, text="Give an Input",font=("Helvetica", 20))
     instruction_label.grid(row=0,columnspan=4, sticky=tk.EW, padx=30, pady=10)
 
-    Storey_list = range(0,8)
+    Storey_list = range(1,8)
     lift_list = range(1,4)
 
     #Internal
@@ -210,22 +222,33 @@ def start_tkinter():
     extern_button = tk.Button(root, text="submit external", command=lambda: external_input(Storey_extern_drop.get(),direction_upwards))
     extern_button.grid(column=2, row=5, padx=20, pady=10)
 
-    
-
-
-    
-    
-
 
     root.mainloop()
+
+def update_output():
+    #Targets
+    output_data["state"]["lifts"][0]["targets"] = elevator1_targets
+    output_data["state"]["lifts"][1]["targets"] = elevator2_targets
+    output_data["state"]["lifts"][2]["targets"] = elevator3_targets
+
+    output_data["state"]["lifts"][0]["position"] = elevator1.position
+    output_data["state"]["lifts"][1]["position"] = elevator2.position
+    output_data["state"]["lifts"][2]["position"] = elevator3.position
+
+    
+
+
 
 def start_pygame():
     running = True
     while running:
+        global elevator1_targets
+        global elevator2_targets
+        global elevator3_targets
         elevator1_targets = input_data["state"]["lifts"][0]["targets"]
         elevator2_targets = input_data["state"]["lifts"][1]["targets"]
         elevator3_targets = input_data["state"]["lifts"][2]["targets"]
-        
+
         if elevator1_targets and not elevator1.animation_playing and not elevator1.close_doors:
             elevator1.set_storey(storey[elevator1_targets[0]])
         if elevator2_targets and not elevator2.animation_playing and not elevator2.close_doors:

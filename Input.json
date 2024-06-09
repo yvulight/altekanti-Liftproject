@@ -1,36 +1,30 @@
 {
-  "input": {
+    "input": {
         "is_internal": false,
-      "external": {
-          "storey": 4,
-          "upwards": false
-      },
-      "internal": {
-          "lift": 0,
-          "storey": 2
-      }
-  },
-  "state": {
+        "external": {
+            "storey": 7,
+            "upwards": true
+        },
+        "internal": {
+            "lift": 2,
+            "storey": 3
+        }
+    },
+    "state": {
         "lifts": [
             {
-                "position": 6,
-                "targets": [
-                  7
-                ],
-                "people": 10
+                "position": 1,
+                "targets": [],
+                "people": 0
             },
             {
-                "position": 4,
-                "targets": [
-                    5,6
-                ],
+                "position": 2,
+                "targets": [],
                 "people": 8
             },
             {
-                "position": 5,
-                "targets": [
-                    6,7
-                ],
+                "position": 3,
+                "targets": [],
                 "people": 10
             }
         ]
