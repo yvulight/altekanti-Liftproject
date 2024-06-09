@@ -48,7 +48,7 @@ def choose_lift(input): # Funktion für die Selektion der Lifts
     for i in range(3): # 3, weil es drei Lifts hat
         lift_positions_list.append(input['state']['lifts'][i]['position']) # auf diesr Variabel werden die momentanen Positon der Lifts gespeichert
         lift_targets_list.append(input['state']['lifts'][i]['targets']) # uf diesr Variabel werden die momentanen targets der Lifts gespeichert
-        lift_people_list.append(input['state']['lifts'][i]['people']) auf diesr Variabel werden die momentane Anzahl Personen der Lifts gespeichert
+        lift_people_list.append(input['state']['lifts'][i]['people']) # auf diesr Variabel werden die momentane Anzahl Personen der Lifts gespeichert
 
     # Überprüfe, ob ein Lift bereits an der gleichen Position ist
     for lift_number in range(3):

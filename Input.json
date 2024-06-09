@@ -14,18 +14,18 @@
         "lifts": [
             {
                 "position": 1,
-                "targets": [],
-                "people": 5
+                "targets": [4,7],
+                "people": 0
             },
             {
                 "position": 2,
-                "targets": [],
-                "people": 8
+                "targets": [5,6,7],
+                "people": 0
             },
             {
                 "position": 3,
-                "targets": [],
-                "people": 10
+                "targets": [1,0],
+                "people": 0
             }
         ]
     }
