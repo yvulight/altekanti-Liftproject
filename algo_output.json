@@ -1,15 +1,4 @@
 {
-    "input": {
-        "is_internal": false,
-        "external": {
-            "storey": 4,
-            "upwards": true
-        },
-        "internal": {
-            "lift": 0,
-            "storey": 6
-        }
-    },
     "state": {
         "lifts": [
             {
@@ -24,7 +13,9 @@
             },
             {
                 "position": 3,
-                "targets": [],
+                "targets": [
+                    4
+                ],
                 "people": 10
             }
         ]

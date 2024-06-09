@@ -143,16 +143,18 @@ with open("Input.json") as I:
 
 # Setting Up Pygame
 pygame.init()
+width, height = 400, 500
 pygame.mixer.init()
 width, height = 400, 600
+
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Elevator Sim 2024")
 
 # For FPS and Frame Capping
 clock = pygame.time.Clock()
 #background music
-#pygame.mixer.music.load("masterpiece.wav")
-#pygame.mixer.music.play(loops = -1)
+pygame.mixer.music.load("masterpiece.wav")
+pygame.mixer.music.play(loops = -1)
 # Translate the storey into the y-coordinates
 storey = {
     1: 442,
@@ -196,7 +198,7 @@ class Elevator(pygame.sprite.Sprite):
         self.position = int(7-(self.rect.y -22)/70)
         #load animation 
         self.animation_frames = [
-            pygame.image.load('images/elevator/Elevator_Doors_2.png').convert() for i in range(1, 14)
+            pygame.image.load('images/elevator/Elevator_Doors_{i}.png').convert() for i in range(1, 14)
         ]
         #convert every frame
         for frame in self.animation_frames:
@@ -410,8 +412,7 @@ def start_pygame():
             elevator1_targets = input_data["state"]["lifts"][0]["targets"]
             elevator2_targets = input_data["state"]["lifts"][1]["targets"]
             elevator3_targets = input_data["state"]["lifts"][2]["targets"]
-            #input_changed = False
-            print(elevator1_targets)
+            input_changed = False
 
 
         if elevator1_targets and not elevator1.animation_playing and not elevator1.close_doors:
@@ -455,7 +456,7 @@ def start_pygame():
         screen.blit(background, (0, 0))
         all_elevators.draw(screen)
         pygame.display.flip()
-        print(elevator1_targets)
+
         clock.tick(30)
 
     pygame.quit()
