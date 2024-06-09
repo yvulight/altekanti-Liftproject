@@ -430,11 +430,14 @@ def start_pygame():
      
         for elevator in all_elevators:
             if elevator.is_at_target:
+                #play animation to open door at target
                 if not elevator.animation_played:
                     elevator.play_animation_open_door()
+                #play animation to close door if state is matched
                 elif elevator.close_doors:
                     elevator.play_animation_close_door()
                     if elevator.doors_closed:
+                        #pop the first element in the elevator_targets list so that it can move to the next target
                         if elevator == elevator1 and elevator1_targets:
                             elevator1_targets.pop(0)
                             if elevator1_targets:
