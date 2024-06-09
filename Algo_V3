@@ -37,6 +37,12 @@ def choose_lift(input):
 
     goodness_list = []
     for lift_number in range(3):
+        if lift_people_list[lift_number] >= 14:
+            goodness_list.append(float('inf'))  # Dieser Lift kann keine neuen externen Ziele annehmen
+            continue
+
+    goodness_list = []
+    for lift_number in range(3):
         value = abs(lift_positions_list[lift_number] - where_pressed)  # return the absolute value 
         same_direction = (lift_positions_list[lift_number] < where_pressed) == direction_upwards
         value += 0.7 * same_direction  # Werte die Fahrtrichtung höher
