@@ -198,7 +198,7 @@ class Elevator(pygame.sprite.Sprite):
         self.position = int(7-(self.rect.y -22)/70)
         #load animation 
         self.animation_frames = [
-            pygame.image.load('images/elevator/Elevator_Doors_{i}.png').convert() for i in range(1, 14)
+            pygame.image.load(os.path.join("images", "elevator", f"elevator_doors_{i}.png")).convert() for i in range(1, 14)
         ]
         #convert every frame
         for frame in self.animation_frames:
