@@ -2,12 +2,16 @@ import pygame
 import json
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import threading
 import os
 
 # Load input data
 with open("algo_output.json") as f:
     input_data = json.load(f)
+
+with open("Input.json") as I:
+    output_data = json.load(I)
 
 # Setting Up Pygame
 pygame.init()
@@ -29,14 +33,14 @@ storey = {
     7: 22
 }
 background_path = os.path.join("images", "Elevator_background.png")
-background = pygame.image.load(background_path)
+background = pygame.image.load('images/Elevator_Background.png')
 
 # Creating Elevator Class 
 class Elevator(pygame.sprite.Sprite):
     def __init__(self, x, y, speed_y):
         super(Elevator, self).__init__()
         image_path = os.path.join("images", "elevator", "Elevator_Doors_1.png")
-        self.image = pygame.image.load(image_path).convert()
+        self.image = pygame.image.load('images/elevator/Elevator_Doors_1.png').convert()
         self.image.set_colorkey((0, 0, 0), pygame.RLEACCEL)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed_y = speed_y
@@ -47,7 +51,7 @@ class Elevator(pygame.sprite.Sprite):
         self.close_doors = False
         self.doors_closed = False
         self.animation_frames = [
-            pygame.image.load(os.path.join("images", "elevator", f"elevator_doors_{i}.png")).convert() for i in range(1, 14)
+            pygame.image.load('images/elevator/Elevator_Doors_2.png').convert() for i in range(1, 14)
         ]
         for frame in self.animation_frames:
             frame.set_colorkey((0, 0, 0), pygame.RLEACCEL)
@@ -110,24 +114,108 @@ def submit_number():
         if 1 <= number <= 7:
             elevator1.set_storey(storey[number])
             messagebox.showinfo("Number Entered", f"You entered: {number}")
+            quit()
         else:
             messagebox.showerror("Invalid Input", "Please enter a number between 1 and 7")
     except ValueError:
         messagebox.showerror("Invalid Input", "Please enter a valid number")
 
+def internal_input(lift,storey):
+    print(lift,storey)
+    output_data['input']['is_internal'] = True
+    output_data['input']['internal']['storey'] = storey
+
+def external_input(storey,direction_upwards):
+    print(direction_upwards,storey)
+
+def send_to_algo():
+
+
+def change_direction(bool):
+    global direction_upwards
+    direction_upwards = bool
+
 def start_tkinter():
     root = tk.Tk()
-    root.title("Number Entry")
+    #root.geometry('600x400')
+    root.title("Input")
 
-    instruction_label = tk.Label(root, text="Please enter a number (1-7):")
-    instruction_label.pack(padx=20, pady=10)
+    root.resizable(0,0)
+    root.columnconfigure(0, weight=2)
+    root.columnconfigure(1, weight=1)
+    root.columnconfigure(2, weight=2)
+    root.columnconfigure(3, weight=1)
 
-    global number_entry
-    number_entry = tk.Entry(root)
-    number_entry.pack(padx=20, pady=10)
+    instruction_label = tk.Label(root, text="Give an Input",font=("Helvetica", 20))
+    instruction_label.grid(row=0,columnspan=4, sticky=tk.EW, padx=30, pady=10)
 
-    submit_button = tk.Button(root, text="Submit", command=submit_number)
-    submit_button.pack(padx=20, pady=10)
+    Storey_list = range(0,8)
+    lift_list = range(1,4)
+
+    #Internal
+    internal_label = tk.Label(root, text='Internal',font=("Helvetica", 14))
+    internal_label.grid(column=0,row=1,columnspan=2,sticky=tk.EW, padx=30, pady=10)
+
+    #lift Intern
+    lift_intern_label = tk.Label(root, text='which Lift?')
+    lift_intern_label.grid(column=0,row=2,padx=10, pady=10)
+
+    lift_internal_drop = tk.StringVar(root)
+    lift_internal_drop.set(lift_list[0])
+
+    option_lift_intern = tk.OptionMenu(root, lift_internal_drop, *lift_list)
+    option_lift_intern.grid(column=1,row=2, padx=10, pady=10)
+
+    #storey intern
+    storey_intern_label = tk.Label(root, text='which Storey?')
+    storey_intern_label.grid(column=0,row=3,padx=10, pady=10)
+
+    Storey_internal_drop = tk.StringVar(root)
+    Storey_internal_drop.set(Storey_list[0])
+
+    option_storey_intern = tk.OptionMenu(root, Storey_internal_drop, *Storey_list)
+    option_storey_intern.grid(column=1,row=3, padx=20, pady=10)
+
+    #intern submit
+    internal_button = tk.Button(root, text="submit Internal", command=lambda: internal_input(lift_internal_drop.get(),Storey_internal_drop.get()))
+    internal_button.grid(column=0, row=5, padx=20, pady=10)
+
+
+
+    #Extern
+    extern_label = tk.Label(root, text='Extern',font=("Helvetica", 14))
+    extern_label.grid(column=2,row=1,columnspan=2,sticky=tk.EW, padx=30, pady=10)
+
+    #storey intern
+    storey_extern_label = tk.Label(root, text='which Storey?')
+    storey_extern_label.grid(column=2,row=2,padx=10, pady=10)
+
+    Storey_extern_drop = tk.StringVar(root)
+    Storey_extern_drop.set(Storey_list[0])
+
+    option_storey_extern = tk.OptionMenu(root, Storey_extern_drop, *Storey_list)
+    option_storey_extern.grid(column=3,row=2, padx=20, pady=10)
+
+    #direction
+    direction_label = tk.Label(root, text='Direction')
+    direction_label.grid(column=2,row=3, padx=30, pady=10)
+
+    direction_up = tk.Button(root, text='Up', command= lambda:change_direction(True))
+    direction_up.grid(column=3, row=3, padx=0, pady=0)
+
+    direction_down = tk.Button(root, text='Down', command= lambda:change_direction(False))
+    direction_down.grid(column=3, row=4, padx=0, pady=0)
+
+    #intern submit
+    extern_button = tk.Button(root, text="submit external", command=lambda: external_input(Storey_extern_drop.get(),direction_upwards))
+    extern_button.grid(column=2, row=5, padx=20, pady=10)
+
+    
+
+
+    
+    
+
 
     root.mainloop()
 

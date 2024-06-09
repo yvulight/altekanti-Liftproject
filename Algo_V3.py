@@ -67,7 +67,7 @@ def choose_lift(input):
     return lift_number, already_in_targets
 
 # Opening JSON file
-f = open('input.json')
+f = open('Input.json')
 
 # returns JSON object as a dictionary
 input = json.load(f)
