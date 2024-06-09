@@ -2,12 +2,12 @@
     "input": {
         "is_internal": true,
         "external": {
-            "storey": 7,
-            "upwards": false
+            "storey": 4,
+            "upwards": true
         },
         "internal": {
             "lift": 0,
-            "storey": 4
+            "storey": 3
         }
     },
     "state": {
