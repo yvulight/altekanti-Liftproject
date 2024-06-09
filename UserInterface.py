@@ -4,7 +4,7 @@ import json
 # Setting Up Pygame
 pygame.init()
 #set aspect ratio
-width, height = 800, 600
+width, height = 400, 500
 screen = pygame.display.set_mode((width, height))
 #name the window
 pygame.display.set_caption("Elevator Sim 2024")
@@ -13,14 +13,15 @@ pygame.display.set_caption("Elevator Sim 2024")
 clock = pygame.time.Clock()
 #translate the storey into the y-coordinates
 storey = {
-    1: 50,
-    2: 100,
-    3: 150,
-    4: 200, 
-    5: 250,
-    6: 300, 
-    7: 350
+    1: 442,
+    2: 372,
+    3: 302,
+    4: 232, 
+    5: 162,
+    6: 92, 
+    7: 22
 }
+background = pygame.image.load("images\Elevator_background.png")
 
 # creating Elevator Class 
 class Elevator(pygame.sprite.Sprite):
@@ -99,9 +100,9 @@ class Elevator(pygame.sprite.Sprite):
 
 all_elevators = pygame.sprite.Group()
 #create elevators and group them
-elevator1 = Elevator(300, 0, 10)
-elevator2 = Elevator(400, 0, 10)
-elevator3 = Elevator(500, 0, 10)
+elevator1 = Elevator(100, storey[1], 5)
+elevator2 = Elevator(184, storey[2], 5)
+elevator3 = Elevator(268, storey[3], 5)
 all_elevators.add(elevator1)
 all_elevators.add(elevator2)
 all_elevators.add(elevator3)
@@ -134,7 +135,7 @@ while running:
                 elevator.play_animation_close_door()
 
     screen.fill((0, 0, 0))
-
+    screen.blit(background, (0, 0))
     all_elevators.draw(screen)
 
     pygame.display.flip()
