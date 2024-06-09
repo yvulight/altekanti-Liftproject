@@ -16,13 +16,16 @@ with open("Input.json") as I:
 
 # Setting Up Pygame
 pygame.init()
+pygame.mixer.init()
 width, height = 400, 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Elevator Sim 2024")
 
 # For FPS and Frame Capping
 clock = pygame.time.Clock()
-
+#background music
+pygame.mixer.music.load("masterpiece.wav")
+pygame.mixer.music.play(loops = -1)
 # Translate the storey into the y-coordinates
 storey = {
     1: 442,
