@@ -1,18 +1,21 @@
 
-def sort_list(input,lift_number):
+import json
+import math
+
+def sort_list(input,lift_number): # Funktion für das Sortieren wird erstellt
     lift_position = input['state']['lifts'][lift_number]['position'] # lift position zb. 1
     lift_targets = input['state']['lifts'][lift_number]['targets'] #Liste mit den momentanen targets zb. [5,6,7]
-    all_list = [lift_position]+lift_targets
+    all_list = [lift_position]+lift_targets # Liste mit den Positionen und den targets
 
-    if input['input']['is_internal']:
-        new_target = input['input']['internal']['storey']
-        direction_upwards = lift_position <= new_target
+    if input['input']['is_internal']: # falls dies False ist
+        new_target = input['input']['internal']['storey'] #new_target ist das gwünschte Stockwerk (intern)
+        direction_upwards = lift_position <= new_target # die Fahrtrichtung wird bestimmt
     else:
-        direction_upwards = input['input']['external']['upwards']
-        new_target = input['input']['external']['storey']
+        direction_upwards = input['input']['external']['upwards'] # direction_upwarts wird dem Input (boolean) gleichgesetzt
+        new_target = input['input']['external']['storey'] # der input für das gewünschte Stockwerk wird gespeichert
 
-    done = False
-    #Alles durchgehen und checken ob dazwischen mit beruecksichtigung von direction
+    done = False # done wird der boolean False zugeschrieben
+    #Hier werden die Listen richtig sortier unter berücksichtigung der Fahrtrichtung
     if direction_upwards: # hochfahren
         for i in range(1,len(all_list)):
                 if all_list[i-1] <= new_target < all_list[i]:
