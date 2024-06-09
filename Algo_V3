@@ -1,37 +1,20 @@
 import json
 import math
 
-def sort_list(input,lift_number):
-    lift_position = input['state']['lifts'][lift_number]['position'] # lift position zb. 1
-    lift_targets = input['state']['lifts'][lift_number]['targets'] #Liste mit den momentanen targets zb. [5,6,7]
-    all_list = [lift_position]+lift_targets
-
-    if input['input']['is_internal']:
-        new_target = input['input']['internal']['storey']
-        direction_upwards = lift_position <= new_target
-    else:
-        direction_upwards = input['input']['external']['upwards']
-        new_target = input['input']['external']['storey']
-
-    done = False
-    #Alles durchgehen und checken ob dazwischen mit beruecksichtigung von direction
-    if direction_upwards: # hochfahren
-        for i in range(1,len(all_list)):
-                if all_list[i-1] <= new_target < all_list[i]:
-                    all_list.insert(i, new_target)
-                    done = True
-                    break
-    if not direction_upwards: # runterfahren
-        for i in range(1,len(all_list)):
-                if all_list[i-1] >= new_target > all_list[i]:
-                    all_list.insert(i, new_target)
-                    done = True
-                    break
-    if not done:
-        all_list.append(new_target)
-
-    all_list.pop(0)
-    return all_list
+def insertion_sort(arr, direction):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        if direction == "up":
+            while j >= 0 and arr[j] > key:
+                arr[j + 1] = arr[j]
+                j -= 1
+        elif direction == "down":
+            while j >= 0 and arr[j] < key:
+                arr[j + 1] = arr[j]
+                j -= 1
+        arr[j + 1] = key
+    return arr
 
 
 def choose_lift(input):
