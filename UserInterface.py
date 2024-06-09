@@ -1,19 +1,24 @@
 import pygame
 import json
+import tkinter as tk
+from tkinter import messagebox
+import threading
+import os
 
-f = open("input.json")
-input = json.load(f)
+# Load input data
+with open("algo_output.json") as f:
+    input_data = json.load(f)
+
 # Setting Up Pygame
 pygame.init()
-#set aspect ratio
 width, height = 400, 500
 screen = pygame.display.set_mode((width, height))
-#name the window
 pygame.display.set_caption("Elevator Sim 2024")
 
 # For FPS and Frame Capping
 clock = pygame.time.Clock()
-#translate the storey into the y-coordinates
+
+# Translate the storey into the y-coordinates
 storey = {
     1: 442,
     2: 372,
@@ -23,66 +28,54 @@ storey = {
     6: 92, 
     7: 22
 }
-background = pygame.image.load("images\Elevator_background.png")
+background_path = os.path.join("images", "Elevator_background.png")
+background = pygame.image.load(background_path)
 
-# creating Elevator Class 
+# Creating Elevator Class 
 class Elevator(pygame.sprite.Sprite):
     def __init__(self, x, y, speed_y):
-        #inherit from sprite.Sprite 
         super(Elevator, self).__init__()
-        #import main image 
-        image_path = r"images\elevator\Elevator_Doors_1.png"
+        image_path = os.path.join("images", "elevator", "Elevator_Doors_1.png")
         self.image = pygame.image.load(image_path).convert()
         self.image.set_colorkey((0, 0, 0), pygame.RLEACCEL)
-        
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-        #speed of Elevator px per frame
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.speed_y = speed_y
-
         self.target_y = y
-        #variables for the elevator states
         self.is_at_target = False
         self.animation_playing = False
         self.animation_played = False
         self.close_doors = False
         self.doors_closed = False
-
-        #load animation frames 
         self.animation_frames = [
-            pygame.image.load(f"images\elevator\elevator_doors_{i}.png").convert() for i in range(1, 14)
+            pygame.image.load(os.path.join("images", "elevator", f"elevator_doors_{i}.png")).convert() for i in range(1, 14)
         ]
         for frame in self.animation_frames:
             frame.set_colorkey((0, 0, 0), pygame.RLEACCEL)
         self.anim_index = 0
 
     def update(self):
-        # move towards target_y, at a max pace of speed_y
         if self.rect.y < self.target_y:
             self.rect.y += min(self.speed_y, self.target_y - self.rect.y)
         elif self.rect.y > self.target_y:
             self.rect.y -= min(self.speed_y, self.rect.y - self.target_y)
-        #check if elevator at target storey
         if self.rect.y == self.target_y:
             self.is_at_target = True
-            # initiate animation
             if not self.animation_playing and not self.animation_played:
                 self.animation_playing = True
                 self.anim_index = 0
-            #update state of the elevator for animations
         else:
             self.is_at_target = False
             self.animation_playing = False
             self.animation_played = False
             self.close_doors = False
-    #set the target_y and update state
+
     def set_storey(self, target_y):
         self.target_y = target_y
         self.is_at_target = False
         self.animation_playing = False
         self.animation_played = False
         self.close_doors = False
-    # animation to open the door 
+
     def play_animation_open_door(self):
         if self.is_at_target and self.animation_playing:
             if self.anim_index < len(self.animation_frames) - 1:
@@ -92,8 +85,8 @@ class Elevator(pygame.sprite.Sprite):
                 self.animation_played = True
                 self.image = self.animation_frames[-1]
                 self.close_doors = True
-                elevator.doors_closed = False
-    # animation to close the door (same frames but in reverse)
+                self.doors_closed = False
+
     def play_animation_close_door(self):
         if self.is_at_target and self.close_doors:
             if self.anim_index > 0:
@@ -101,76 +94,96 @@ class Elevator(pygame.sprite.Sprite):
                 self.image = self.animation_frames[self.anim_index]
             else:
                 self.image = self.animation_frames[0]
-                elevator.doors_closed = True
+                self.doors_closed = True
 
+# Create elevators and group them
 all_elevators = pygame.sprite.Group()
-#create 3 instances of the elevator at defined coordinates and speed
 elevator1 = Elevator(100, storey[1], 5)
 elevator2 = Elevator(184, storey[2], 5)
 elevator3 = Elevator(268, storey[3], 5)
-#group all instances
-all_elevators.add(elevator1)
-all_elevators.add(elevator2)
-all_elevators.add(elevator3)
+all_elevators.add(elevator1, elevator2, elevator3)
 
-# Main game loop
-running = True
-while running:
+# Tkinter Part
+def submit_number():
+    try:
+        number = int(number_entry.get())
+        if 1 <= number <= 7:
+            elevator1.set_storey(storey[number])
+            messagebox.showinfo("Number Entered", f"You entered: {number}")
+        else:
+            messagebox.showerror("Invalid Input", "Please enter a number between 1 and 7")
+    except ValueError:
+        messagebox.showerror("Invalid Input", "Please enter a valid number")
 
-    #creating lists with the targets for every elevator
-    elevator1_targets = input["state"]["lifts"][0]["targets"]
-    elevator2_targets = input["state"]["lifts"][1]["targets"]
-    elevator3_targets = input["state"]["lifts"][2]["targets"]
-    #update the target y for each elevator in case there is no animation playing and there are still other targets
-    if len(elevator1_targets) > 0 and not elevator1.animation_playing and not elevator1.close_doors:
-        elevator1.set_storey(storey[elevator1_targets[0]])
-        print("elevator1:", elevator1_targets)
-    if len(elevator2_targets) > 0 and not elevator2.animation_playing and not elevator2.close_doors:
-        elevator2.set_storey(storey[elevator2_targets[0]])
-        #print("elevator2:", elevator2_targets)
-    if len(elevator3_targets) > 0 and not elevator3.animation_playing and not elevator3.close_doors:
-        elevator3.set_storey(storey[elevator3_targets[0]])
-        #print("elevator3:", elevator3_targets)
+def start_tkinter():
+    root = tk.Tk()
+    root.title("Number Entry")
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    # Update the elevators
-    all_elevators.update()
- 
-    for elevator in all_elevators:
-        if elevator.is_at_target:
-            #play the open doors animation
-            if not elevator.animation_played:
-                elevator.play_animation_open_door()
-            #play the close doors animation
-            elif elevator.close_doors:
-                elevator.play_animation_close_door()
-                # update the target y for each elevator if the animations have finished and there are other target y 
-                if elevator == elevator1 and len(elevator1_targets) > 0 and elevator.doors_closed:
-                    elevator1_targets.pop(0)
-                    if len(elevator1_targets) > 0:
-                        elevator1.set_storey(storey[elevator1_targets[0]])
-                if elevator == elevator2 and len(elevator2_targets) > 0 and elevator.doors_closed:
-                    elevator2_targets.pop(0)
-                    if len(elevator2_targets) > 0:
-                        elevator2.set_storey(storey[elevator2_targets[0]])
-                if elevator == elevator3 and len(elevator3_targets) > 0 and elevator.doors_closed:
-                    elevator3_targets.pop(0)
-                    if len(elevator3_targets) > 0:
-                        elevator3.set_storey(storey[elevator3_targets[0]])
+    instruction_label = tk.Label(root, text="Please enter a number (1-7):")
+    instruction_label.pack(padx=20, pady=10)
 
-    
-    screen.fill((0, 0, 0))
+    global number_entry
+    number_entry = tk.Entry(root)
+    number_entry.pack(padx=20, pady=10)
 
-    #draw background
-    screen.blit(background, (0, 0))
-    all_elevators.draw(screen)
+    submit_button = tk.Button(root, text="Submit", command=submit_number)
+    submit_button.pack(padx=20, pady=10)
 
-    pygame.display.flip()
+    root.mainloop()
 
-    # Frame rate
-    clock.tick(30)
+def start_pygame():
+    running = True
+    while running:
+        elevator1_targets = input_data["state"]["lifts"][0]["targets"]
+        elevator2_targets = input_data["state"]["lifts"][1]["targets"]
+        elevator3_targets = input_data["state"]["lifts"][2]["targets"]
+        
+        if elevator1_targets and not elevator1.animation_playing and not elevator1.close_doors:
+            elevator1.set_storey(storey[elevator1_targets[0]])
+        if elevator2_targets and not elevator2.animation_playing and not elevator2.close_doors:
+            elevator2.set_storey(storey[elevator2_targets[0]])
+        if elevator3_targets and not elevator3.animation_playing and not elevator3.close_doors:
+            elevator3.set_storey(storey[elevator3_targets[0]])
 
-# Quit Pygame
-pygame.quit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # Update the elevators
+        all_elevators.update()
+     
+        for elevator in all_elevators:
+            if elevator.is_at_target:
+                if not elevator.animation_played:
+                    elevator.play_animation_open_door()
+                elif elevator.close_doors:
+                    elevator.play_animation_close_door()
+                    if elevator.doors_closed:
+                        if elevator == elevator1 and elevator1_targets:
+                            elevator1_targets.pop(0)
+                            if elevator1_targets:
+                                elevator1.set_storey(storey[elevator1_targets[0]])
+                        if elevator == elevator2 and elevator2_targets:
+                            elevator2_targets.pop(0)
+                            if elevator2_targets:
+                                elevator2.set_storey(storey[elevator2_targets[0]])
+                        if elevator == elevator3 and elevator3_targets:
+                            elevator3_targets.pop(0)
+                            if elevator3_targets:
+                                elevator3.set_storey(storey[elevator3_targets[0]])
+
+        screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
+        all_elevators.draw(screen)
+        pygame.display.flip()
+
+        clock.tick(30)
+
+    pygame.quit()
+
+# Run Tkinter in a separate thread
+tk_thread = threading.Thread(target=start_tkinter)
+tk_thread.start()
+
+# Run Pygame in the main thread
+start_pygame()
