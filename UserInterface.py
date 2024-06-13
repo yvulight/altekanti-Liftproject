@@ -5,7 +5,7 @@ from tkinter import messagebox
 from tkinter import ttk
 import threading
 import os
-import math
+
 
 
 def sort_list(input,lift_number):
