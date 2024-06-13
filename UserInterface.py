@@ -186,7 +186,7 @@ class Elevator(pygame.sprite.Sprite):
         self.people = 0
         #initiate variables for animation controlling and elevator state
         self.is_at_target = False
-        #is an animation playing?
+        #is an animation playing
         self.animation_playing = False
         #has an animation been played at this position
         self.animation_played = False
@@ -198,7 +198,7 @@ class Elevator(pygame.sprite.Sprite):
         self.position = int(7-(self.rect.y -22)/70)
         #load animation 
         self.animation_frames = [
-            pygame.image.load(os.path.join("images", "elevator", f"elevator_doors_{i}.png")).convert() for i in range(1, 14)
+            pygame.image.load(os.path.join("images", "elevator", "Elevator_Doors_" + str(i) + ".png")).convert() for i in range(1, 14)
         ]
         #convert every frame
         for frame in self.animation_frames:
@@ -258,6 +258,7 @@ class Elevator(pygame.sprite.Sprite):
                 #stay on first image and set the elevator state accordingly
                 self.image = self.animation_frames[0]
                 self.doors_closed = True
+                self.animation_playing = False
 
 # Create elevators and group them
 all_elevators = pygame.sprite.Group()
@@ -297,6 +298,7 @@ def external_input(storey,direction_upwards):
     send_to_algo(False)
 
 def send_to_algo(is_internal):
+    global input_changed
     update_output()
     with open('Input.json', 'w', encoding='utf-8') as v:
         json.dump(output_data, v, ensure_ascii=False, indent=4)
@@ -414,7 +416,7 @@ def start_pygame():
             elevator3_targets = input_data["state"]["lifts"][2]["targets"]
             input_changed = False
 
-
+        print(elevator2.animation_playing)
         if elevator1_targets and not elevator1.animation_playing and not elevator1.close_doors:
             elevator1.set_storey(storey[elevator1_targets[0]])
         if elevator2_targets and not elevator2.animation_playing and not elevator2.close_doors:
