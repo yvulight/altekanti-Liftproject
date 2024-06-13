@@ -51,6 +51,7 @@ def choose_lift(input):
     lift_positions_list = []
     lift_targets_list = []
     lift_people_list = []
+    lift_same_direction_list = []
     for i in range(3):
         lift_positions_list.append(input['state']['lifts'][i]['position'])
         lift_targets_list.append(input['state']['lifts'][i]['targets'])
@@ -58,17 +59,24 @@ def choose_lift(input):
 
     # Überprüfe, ob ein Lift bereits an der gleichen Position ist
     for lift_number in range(3):
-        if lift_positions_list[lift_number] == where_pressed and direction_upwards == (lift_positions_list[lift_number] < where_pressed) and lift_people_list[lift_number] < 10:
+        #same Direction 
+        if lift_targets_list[lift_number]:
+            same_direction = (lift_positions_list[lift_number] < where_pressed) == direction_upwards
+        elif not lift_targets_list[lift_number]:
+            same_direction = True    
+        lift_same_direction_list.append(same_direction)
+
+        if lift_positions_list[lift_number] == where_pressed and same_direction:
             return lift_number, where_pressed in lift_targets_list[lift_number]
 
     goodness_list = []
+    print(lift_positions_list)
     for lift_number in range(3):
         if lift_people_list[lift_number] >= 14:
             goodness_list.append(float('inf'))  # Dieser Lift kann keine neuen externen Ziele annehmen
             continue
 
         value = abs(lift_positions_list[lift_number] - where_pressed)
-        same_direction = (lift_positions_list[lift_number] < where_pressed) == direction_upwards
         value += 0.7 * same_direction  # Werte die Fahrtrichtung höher
         value += 0.8 * abs(same_direction - 1)  # Verringere den Wert, wenn die Fahrtrichtung unterschiedlich ist
 
@@ -81,11 +89,10 @@ def choose_lift(input):
         someone_enters = 1 if lift_positions_list[lift_number] == where_pressed else 0
         value += 5 * someone_enters
         goodness_list.append(value)
-
     # Füge eine Überprüfung hinzu, um sicherzustellen, dass `goodness_list` immer die richtige Anzahl von Elementen hat
     while len(goodness_list) < 3:
         goodness_list.append(float('inf'))
-
+    print(goodness_list)
     lift_number = goodness_list.index(min(goodness_list))
     already_in_targets = where_pressed in lift_targets_list[lift_number]
     return lift_number, already_in_targets
@@ -232,6 +239,7 @@ class Elevator(pygame.sprite.Sprite):
         self.animation_playing = False
         self.animation_played = False
         self.close_doors = False
+        self.position = int(7-(self.rect.y -22)/70)
 
     def play_animation_open_door(self):
         #if at target and animation playing proceed
@@ -259,6 +267,7 @@ class Elevator(pygame.sprite.Sprite):
                 self.image = self.animation_frames[0]
                 self.doors_closed = True
                 self.animation_playing = False
+                self.close_doors = False
 
 # Create elevators and group them
 all_elevators = pygame.sprite.Group()
@@ -416,7 +425,6 @@ def start_pygame():
             elevator3_targets = input_data["state"]["lifts"][2]["targets"]
             input_changed = False
 
-        print(elevator2.animation_playing)
         if elevator1_targets and not elevator1.animation_playing and not elevator1.close_doors:
             elevator1.set_storey(storey[elevator1_targets[0]])
         if elevator2_targets and not elevator2.animation_playing and not elevator2.close_doors:

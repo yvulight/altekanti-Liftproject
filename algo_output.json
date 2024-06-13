@@ -2,8 +2,10 @@
     "state": {
         "lifts": [
             {
-                "position": 1,
-                "targets": [],
+                "position": 2,
+                "targets": [
+                    5
+                ],
                 "people": 0
             },
             {
@@ -12,10 +14,8 @@
                 "people": 0
             },
             {
-                "position": 3,
-                "targets": [
-                    7
-                ],
+                "position": 7,
+                "targets": [],
                 "people": 0
             }
         ]
