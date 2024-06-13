@@ -160,7 +160,7 @@ pygame.display.set_caption("Elevator Sim 2024")
 # For FPS and Frame Capping
 clock = pygame.time.Clock()
 #background music
-pygame.mixer.music.load("masterpiece.wav")
+pygame.mixer.music.load("Elevator_Music.mp3")
 pygame.mixer.music.play(loops = -1)
 # Translate the storey into the y-coordinates
 storey = {
